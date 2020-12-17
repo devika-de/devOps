@@ -1,0 +1,16 @@
+{
+  "name": "docker-app",
+  "version": "20.10.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "licence": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "license": "ISC",
+  "description": ""
+}
