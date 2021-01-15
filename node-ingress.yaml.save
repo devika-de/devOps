@@ -1,0 +1,14 @@
+apiVersion: extent/v1
+kind: Ingress
+metadata:
+  name: dockerapp
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /
+          backend:
+            serviceName: myapp-service
+            servicePort: 80

@@ -14,7 +14,7 @@ spec:
       labels:
         app: docker-app
     spec:
-      containers:
+    containers:
       - name: docker-app
         image: devika1998/docker-app:lts
         ports:

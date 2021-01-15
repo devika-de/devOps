@@ -1,0 +1,104 @@
+Name:               prometheus-monitoring-prometheus-oper-prometheus
+Namespace:          default
+CreationTimestamp:  Fri, 18 Dec 2020 17:31:20 +0530
+Selector:           app=prometheus,prometheus=monitoring-prometheus-oper-prometheus
+Labels:             app=prometheus-operator-prometheus
+                    app.kubernetes.io/managed-by=Helm
+                    chart=prometheus-operator-9.3.2
+                    heritage=Helm
+                    release=monitoring
+Annotations:        
+                    meta.helm.sh/release-name: monitoring
+                    meta.helm.sh/release-namespace: default
+                    prometheus-operator-input-hash: 1452363617173536305
+Replicas:           1 desired | 1 total
+Update Strategy:    RollingUpdate
+Pods Status:        1 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:           app=prometheus
+                    prometheus=monitoring-prometheus-oper-prometheus
+  Service Account:  monitoring-prometheus-oper-prometheus
+  Containers:
+   prometheus:
+    Image:      quay.io/prometheus/prometheus:v2.18.2
+    Port:       9090/TCP
+    Host Port:  0/TCP
+    Args:
+      --web.console.templates=/etc/prometheus/consoles
+      --web.console.libraries=/etc/prometheus/console_libraries
+      --config.file=/etc/prometheus/config_out/prometheus.env.yaml
+      --storage.tsdb.path=/prometheus
+      --storage.tsdb.retention.time=10d
+      --web.enable-lifecycle
+      --storage.tsdb.no-lockfile
+      --web.external-url=http://monitoring-prometheus-oper-prometheus.default:9090
+      --web.route-prefix=/
+    Liveness:     http-get http://:web/-/healthy delay=0s timeout=3s period=5s #success=1 #failure=6
+    Readiness:    http-get http://:web/-/ready delay=0s timeout=3s period=5s #success=1 #failure=120
+    Environment:  <none>
+    Mounts:
+      /etc/prometheus/certs from tls-assets (ro)
+      /etc/prometheus/config_out from config-out (ro)
+      /etc/prometheus/rules/prometheus-monitoring-prometheus-oper-prometheus-rulefiles-0 from prometheus-monitoring-prometheus-oper-prometheus-rulefiles-0 (rw)
+      /prometheus from prometheus-monitoring-prometheus-oper-prometheus-db (rw)
+   prometheus-config-reloader:
+    Image:      quay.io/coreos/prometheus-config-reloader:v0.38.1
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      /bin/prometheus-config-reloader
+    Args:
+      --log-format=logfmt
+      --reload-url=http://127.0.0.1:9090/-/reload
+      --config-file=/etc/prometheus/config/prometheus.yaml.gz
+      --config-envsubst-file=/etc/prometheus/config_out/prometheus.env.yaml
+    Limits:
+      cpu:     100m
+      memory:  25Mi
+    Requests:
+      cpu:     100m
+      memory:  25Mi
+    Environment:
+      POD_NAME:   (v1:metadata.name)
+    Mounts:
+      /etc/prometheus/config from config (rw)
+      /etc/prometheus/config_out from config-out (rw)
+   rules-configmap-reloader:
+    Image:      docker.io/jimmidyson/configmap-reload:v0.3.0
+    Port:       <none>
+    Host Port:  <none>
+    Args:
+      --webhook-url=http://127.0.0.1:9090/-/reload
+      --volume-dir=/etc/prometheus/rules/prometheus-monitoring-prometheus-oper-prometheus-rulefiles-0
+    Limits:
+      cpu:     100m
+      memory:  25Mi
+    Requests:
+      cpu:        100m
+      memory:     25Mi
+    Environment:  <none>
+    Mounts:
+      /etc/prometheus/rules/prometheus-monitoring-prometheus-oper-prometheus-rulefiles-0 from prometheus-monitoring-prometheus-oper-prometheus-rulefiles-0 (rw)
+  Volumes:
+   config:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  prometheus-monitoring-prometheus-oper-prometheus
+    Optional:    false
+   tls-assets:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  prometheus-monitoring-prometheus-oper-prometheus-tls-assets
+    Optional:    false
+   config-out:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+   prometheus-monitoring-prometheus-oper-prometheus-rulefiles-0:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      prometheus-monitoring-prometheus-oper-prometheus-rulefiles-0
+    Optional:  false
+   prometheus-monitoring-prometheus-oper-prometheus-db:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+Volume Claims:  <none>
+Events:         <none>

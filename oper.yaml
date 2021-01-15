@@ -1,0 +1,65 @@
+Name:                   monitoring-prometheus-oper-operator
+Namespace:              default
+CreationTimestamp:      Fri, 18 Dec 2020 17:29:29 +0530
+Labels:                 app=prometheus-operator-operator
+                        app.kubernetes.io/managed-by=Helm
+                        chart=prometheus-operator-9.3.2
+                        heritage=Helm
+                        release=monitoring
+Annotations:            deployment.kubernetes.io/revision: 1
+                        meta.helm.sh/release-name: monitoring
+                        meta.helm.sh/release-namespace: default
+Selector:               app=prometheus-operator-operator,release=monitoring
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:           app=prometheus-operator-operator
+                    chart=prometheus-operator-9.3.2
+                    heritage=Helm
+                    release=monitoring
+  Service Account:  monitoring-prometheus-oper-operator
+  Containers:
+   prometheus-operator:
+    Image:      quay.io/coreos/prometheus-operator:v0.38.1
+    Port:       8080/TCP
+    Host Port:  0/TCP
+    Args:
+      --manage-crds=true
+      --kubelet-service=kube-system/monitoring-prometheus-oper-kubelet
+      --logtostderr=true
+      --localhost=127.0.0.1
+      --prometheus-config-reloader=quay.io/coreos/prometheus-config-reloader:v0.38.1
+      --config-reloader-image=docker.io/jimmidyson/configmap-reload:v0.3.0
+      --config-reloader-cpu=100m
+      --config-reloader-memory=25Mi
+    Environment:  <none>
+    Mounts:       <none>
+   tls-proxy:
+    Image:      squareup/ghostunnel:v1.5.2
+    Port:       8443/TCP
+    Host Port:  0/TCP
+    Args:
+      server
+      --listen=:8443
+      --target=127.0.0.1:8080
+      --key=cert/key
+      --cert=cert/cert
+      --disable-authentication
+    Environment:  <none>
+    Mounts:
+      /cert from tls-proxy-secret (ro)
+  Volumes:
+   tls-proxy-secret:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  monitoring-prometheus-oper-admission
+    Optional:    false
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Progressing    True    NewReplicaSetAvailable
+  Available      True    MinimumReplicasAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   monitoring-prometheus-oper-operator-7b79d975fc (1/1 replicas created)
+Events:          <none>
