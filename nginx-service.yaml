@@ -8,4 +8,4 @@ spec:
   - targetPort: 8080
     port: 80
   selector:
-    tier: docker-app
+    app: docker-app
